@@ -8,13 +8,6 @@
   {{ 'ratings.home.recommendationText' | t }}
 {% endif %}
 
-<br>
-
-{% assign products = collections['mix-and-match-items'].products %}
-{% for product in products %}
-  {% render 'product_card', product: product %}
-{% endfor %}
-
 {% schema %}
 {
   "name": "Star Rating",

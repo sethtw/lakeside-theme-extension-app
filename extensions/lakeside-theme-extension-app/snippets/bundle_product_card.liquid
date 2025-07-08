@@ -1,0 +1,65 @@
+{% comment %}
+  Bundle Product Card Snippet
+  Displays individual product cards with bundle functionality
+{% endcomment %}
+
+<div class="bundle-product-card" 
+     data-product-id="{{ product.id }}"
+     data-bundle-id="{{ bundle_id }}">
+  
+  <div class="product-image-container">
+    <img src="{{ product.featured_image | img_url: 'medium' }}" 
+         alt="{{ product.title | escape }}"
+         class="product-image"
+         loading="lazy">
+    
+    {% if product.compare_at_price > product.price %}
+      <div class="sale-badge">{{ 'bundle.onSale' | t }}</div>
+    {% endif %}
+  </div>
+  
+  <div class="product-info">
+    <h4 class="product-title">
+      <a href="{{ product.url }}" class="product-link">
+        {{ product.title }}
+      </a>
+    </h4>
+    
+    {% if show_price %}
+      <div class="product-price">
+        {% if product.compare_at_price > product.price %}
+          <span class="original-price">{{ product.compare_at_price | money }}</span>
+          <span class="sale-price">{{ product.price | money }}</span>
+        {% else %}
+          <span class="current-price">{{ product.price | money }}</span>
+        {% endif %}
+      </div>
+    {% endif %}
+    
+    {% if product.available %}
+      <div class="product-actions">
+        <button type="button" 
+                class="add-to-bundle-btn"
+                data-product-id="{{ product.id }}"
+                data-bundle-id="{{ bundle_id }}">
+          {{ 'bundle.addToBundle' | t }}
+        </button>
+        <div class="quantity-controls hidden">
+          <button type="button" 
+                  class="quantity-btn minus-btn"
+                  data-product-id="{{ product.id }}"
+                  data-bundle-id="{{ bundle_id }}">-</button>
+          <span class="quantity-display">0</span>
+          <button type="button" 
+                  class="quantity-btn plus-btn"
+                  data-product-id="{{ product.id }}"
+                  data-bundle-id="{{ bundle_id }}">+</button>
+        </div>
+      </div>
+    {% else %}
+      <div class="product-unavailable">
+        <span class="unavailable-text">{{ 'bundle.outOfStock' | t }}</span>
+      </div>
+    {% endif %}
+  </div>
+</div> 

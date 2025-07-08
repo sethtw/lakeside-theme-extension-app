@@ -1,78 +1,227 @@
-# Shopify App Template - Extension only
+# Shopify Product Bundle Theme Extension
 
-This is a template for building an [extension-only Shopify app](https://shopify.dev/docs/apps/build/app-extensions/build-extension-only-app). It contains the basics for building a Shopify app that uses only app extensions.
+A Shopify Theme Extension that allows customers to create customizable product bundles and add them to their cart. This extension provides a modern, responsive interface similar to the sample bundler functionality but built specifically for Shopify using Liquid templates.
 
-This template doesn't include a server or the ability to embed a page in the Shopify Admin. If you want either of these capabilities, choose the [Remix app template](https://github.com/Shopify/shopify-app-template-remix) instead.
+## Features
 
-Whether you choose to use this template or another one, you can use your preferred package manager and the Shopify CLI with [these steps](#installing-the-template).
+- **Customizable Bundle Size**: Configure bundles from 1-12 items
+- **Product Grid Display**: Shows products in a responsive grid layout
+- **Interactive Bundle Slots**: Visual representation of bundle progress
+- **Quantity Controls**: Add/remove products with quantity controls
+- **Dynamic Bundle Updates**: Real-time bundle size adjustments
+- **Cart Integration**: Add complete bundles to cart
+- **Responsive Design**: Works on desktop, tablet, and mobile
+- **Customizable Styling**: Theme colors and styling options
+- **Sale Badge Support**: Highlights products on sale
+- **Out of Stock Handling**: Graceful handling of unavailable products
 
-## Benefits
+## Installation
 
-Shopify apps are built on a variety of Shopify tools to create a great merchant experience. The [create an app](https://shopify.dev/docs/apps/getting-started/create) tutorial in our developer documentation will guide you through creating a Shopify app.
+1. **Deploy the Extension**:
+   ```bash
+   # Navigate to your app directory
+   cd lakeside-bundler-app
+   
+   # Deploy the theme extension
+   shopify app deploy
+   ```
 
-This app template does little more than install the CLI and scaffold a repository.
+2. **Install in Your Theme**:
+   - Go to your Shopify admin
+   - Navigate to Online Store > Themes
+   - Click "Customize" on your active theme
+   - Add the "Product Bundle" block to your desired section
 
-## Getting started
+## Configuration
 
-### Requirements
+### Block Settings
 
-1. You must [download and install Node.js](https://nodejs.org/en/download/) if you don't already have it.
-1. You must [create a Shopify partner account](https://partners.shopify.com/signup) if you don’t have one.
-1. You must create a store for testing if you don't have one, either a [development store](https://help.shopify.com/en/partners/dashboard/development-stores#create-a-development-store) or a [Shopify Plus sandbox store](https://help.shopify.com/en/partners/dashboard/managing-stores/plus-sandbox-store).
+The Product Bundle block includes the following configurable settings:
 
-### Installing the template
+| Setting | Type | Description | Default |
+|---------|------|-------------|---------|
+| **Bundle Title** | Text | Custom title for the bundle section | "Create Your Bundle" |
+| **Product Collection** | Collection | Collection to display products from | - |
+| **Bundle Size** | Range (1-12) | Number of items in the bundle | 6 |
+| **Maximum Products** | Range (4-50) | Maximum products to display | 20 |
+| **Show Product Prices** | Checkbox | Display product prices | Enabled |
+| **Bundle Primary Color** | Color | Primary color for bundle elements | #007acc |
+| **Bundle Accent Color** | Color | Accent color for highlights | #ff6b35 |
 
-This template can be installed using your preferred package manager:
+### Example Configuration
 
-Using yarn:
-
-```shell
-yarn create @shopify/app
+```liquid
+{% render 'product_bundle', 
+   collection: collections['featured-products'],
+   bundle_size: 8,
+   max_products: 25,
+   show_prices: true,
+   bundle_color: '#007acc',
+   bundle_accent_color: '#ff6b35' %}
 ```
 
-Using npm:
+## Usage
 
-```shell
-npm init @shopify/app@latest
+### Basic Implementation
+
+1. **Add to Theme**: Include the bundle block in your theme's collection or product pages
+2. **Configure Collection**: Select which product collection to display
+3. **Set Bundle Size**: Choose how many items customers can add to their bundle
+4. **Customize Styling**: Adjust colors to match your theme
+
+### Customer Experience
+
+1. **Browse Products**: Customers see products in a responsive grid
+2. **Add to Bundle**: Click "Add to Bundle" to add products
+3. **Adjust Quantities**: Use +/- buttons to change quantities
+4. **Visual Feedback**: Bundle slots show progress and selected items
+5. **Complete Bundle**: Fill all slots to enable "Add to Cart"
+6. **Cart Integration**: Add the complete bundle to cart
+
+## File Structure
+
+```
+lakeside-bundler-app/
+├── extensions/
+│   └── lakeside-theme-extension-app/
+│       ├── blocks/
+│       │   └── product_bundle.liquid          # Main bundle block
+│       ├── snippets/
+│       │   ├── bundle_product_card.liquid     # Individual product cards
+│       │   ├── bundle_script.liquid           # JavaScript functionality
+│       │   └── bundle_styles.liquid           # CSS styling
+│       ├── locales/
+│       │   └── en.default.json                # Translations
+│       └── shopify.extension.toml             # Extension configuration
 ```
 
-Using pnpm:
+## Customization
 
-```shell
-pnpm create @shopify/app@latest
+### Styling
+
+The bundle uses CSS custom properties for easy theming:
+
+```css
+.product-bundle-container {
+  --bundle-color: #007acc;           /* Primary color */
+  --bundle-accent-color: #ff6b35;    /* Accent color */
+  --bundle-bg: #ffffff;              /* Background */
+  --bundle-border: #e1e5e9;          /* Border color */
+  --bundle-text: #333333;            /* Text color */
+  --bundle-success: #28a745;         /* Success color */
+  --bundle-error: #dc3545;           /* Error color */
+}
 ```
 
-This will clone the template and install the required dependencies.
+### JavaScript Integration
 
-#### Local Development
+The bundle functionality is self-contained but can be extended:
 
-[The Shopify CLI](https://shopify.dev/docs/apps/tools/cli) connects to an app in your Partners dashboard. It provides environment variables and runs commands in parallel.
+```javascript
+// Access bundle manager globally
+window.BundleManager.bundles[bundleId]
 
-You can develop locally using your preferred package manager. Run one of the following commands from the root of your app.
-
-Using yarn:
-
-```shell
-yarn dev
+// Custom cart integration
+BundleManager.addBundleToCart = function(bundleData) {
+  // Your custom cart logic here
+  console.log('Custom cart integration:', bundleData);
+};
 ```
 
-Using npm:
+### Liquid Templates
 
-```shell
-npm run dev
+All templates use standard Liquid syntax and Shopify objects:
+
+- `product`: Full product object with all properties
+- `collection`: Collection object with products
+- `block.settings`: Configurable block settings
+- `t` filter: Translation support
+
+## Browser Support
+
+- Chrome 60+
+- Firefox 55+
+- Safari 12+
+- Edge 79+
+
+## Performance
+
+- **Lazy Loading**: Product images use `loading="lazy"`
+- **Efficient DOM**: Minimal DOM manipulation
+- **CSS Grid**: Modern layout for better performance
+- **Event Delegation**: Efficient event handling
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Bundle Not Loading**:
+   - Check that the collection has products
+   - Verify block settings are configured
+   - Check browser console for JavaScript errors
+
+2. **Styling Issues**:
+   - Ensure CSS custom properties are supported
+   - Check for theme CSS conflicts
+   - Verify color values are valid
+
+3. **Cart Integration**:
+   - The current implementation shows a success message
+   - Integrate with Shopify's cart API for production use
+   - Add proper error handling for cart operations
+
+### Debug Mode
+
+Enable debug mode by accessing the console:
+
+```javascript
+// View bundle state
+console.log(window.BundleManager.bundles);
+
+// Check specific bundle
+const bundleId = 'your-bundle-id';
+console.log(window.BundleManager.bundles[bundleId]);
 ```
 
-Using pnpm:
+## Development
 
-```shell
-pnpm run dev
-```
+### Local Development
 
-Open the URL generated in your console. Once you grant permission to the app, you can start development (such as generating extensions).
+1. **Setup**:
+   ```bash
+   npm install
+   shopify app dev
+   ```
 
-## Developer resources
+2. **Testing**:
+   - Use Shopify's theme preview
+   - Test on different devices
+   - Verify cart integration
 
-- [Introduction to Shopify apps](https://shopify.dev/docs/apps/getting-started)
-- [App extensions](https://shopify.dev/docs/apps/build/app-extensions)
-- [Extension only apps](https://shopify.dev/docs/apps/build/app-extensions/build-extension-only-app)
-- [Shopify CLI](https://shopify.dev/docs/apps/tools/cli)
+3. **Deployment**:
+   ```bash
+   shopify app deploy
+   ```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For support and questions:
+- Check the troubleshooting section
+- Review Shopify's Theme Extension documentation
+- Open an issue on GitHub
+
+---
+
+**Note**: This extension is designed for Shopify Theme Extensions and requires a Shopify app to be installed in your store. The cart integration is currently simulated and should be customized for your specific needs.

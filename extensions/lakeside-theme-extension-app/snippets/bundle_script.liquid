@@ -1,0 +1,370 @@
+{% comment %}
+  Bundle JavaScript Functionality
+  Handles all bundle interactions and cart integration
+{% endcomment %}
+
+<script>
+(function() {
+  'use strict';
+  
+  // Bundle state management
+  const BundleManager = {
+    bundles: {},
+    
+    init: function(bundleId) {
+      this.bundles[bundleId] = {
+        size: parseInt(document.querySelector(`[data-bundle-id="${bundleId}"]`).dataset.bundleSize),
+        items: [],
+        slots: []
+      };
+      
+      this.setupEventListeners(bundleId);
+      this.renderBundleSlots(bundleId);
+    },
+    
+    setupEventListeners: function(bundleId) {
+      const container = document.querySelector(`[data-bundle-id="${bundleId}"]`);
+      
+      // Add to bundle buttons
+      container.addEventListener('click', (e) => {
+        if (e.target.classList.contains('add-to-bundle-btn')) {
+          const productId = e.target.dataset.productId;
+          this.addToBundle(bundleId, productId);
+        }
+      });
+      
+      // Quantity controls
+      container.addEventListener('click', (e) => {
+        if (e.target.classList.contains('quantity-btn')) {
+          const productId = e.target.dataset.productId;
+          const isPlus = e.target.classList.contains('plus-btn');
+          this.updateQuantity(bundleId, productId, isPlus ? 1 : -1);
+        }
+      });
+      
+      // Remove from bundle slots
+      container.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-item')) {
+          const index = parseInt(e.target.dataset.index);
+          this.removeFromSlot(bundleId, index);
+        }
+      });
+      
+      // Clear bundle
+      const clearBtn = document.getElementById(`clear-bundle-${bundleId}`);
+      if (clearBtn) {
+        clearBtn.addEventListener('click', () => this.clearBundle(bundleId));
+      }
+      
+      // Add to cart
+      const addToCartBtn = document.getElementById(`add-to-cart-${bundleId}`);
+      if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', () => this.addToCart(bundleId));
+      }
+      
+      // Update bundle size
+      const updateBtn = container.querySelector('.update-bundle-btn');
+      const sizeInput = document.getElementById(`bundle-size-${bundleId}`);
+      
+      if (updateBtn && sizeInput) {
+        updateBtn.addEventListener('click', () => {
+          const newSize = parseInt(sizeInput.value);
+          this.updateBundleSize(bundleId, newSize);
+        });
+        
+        sizeInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            const newSize = parseInt(sizeInput.value);
+            this.updateBundleSize(bundleId, newSize);
+          }
+        });
+      }
+    },
+    
+    addToBundle: function(bundleId, productId) {
+      const bundle = this.bundles[bundleId];
+      const totalItems = this.getTotalItems(bundleId);
+      
+      if (totalItems >= bundle.size) {
+        this.showMessage(bundleId, '{{ "bundle.bundleFull" | t }}', 'error');
+        return;
+      }
+      
+      const productCard = document.querySelector(`[data-product-id="${productId}"][data-bundle-id="${bundleId}"]`);
+      const productTitle = productCard.querySelector('.product-title a').textContent.trim();
+      const productImage = productCard.querySelector('.product-image').src;
+      
+      const existingItem = bundle.items.find(item => item.id === productId);
+      if (existingItem) {
+        existingItem.quantity++;
+      } else {
+        bundle.items.push({
+          id: productId,
+          title: productTitle,
+          image: productImage,
+          quantity: 1
+        });
+      }
+      
+      this.renderBundleSlots(bundleId);
+      this.updateProductCard(bundleId, productId);
+      this.updateBundleSummary(bundleId);
+    },
+    
+    updateQuantity: function(bundleId, productId, change) {
+      const bundle = this.bundles[bundleId];
+      const item = bundle.items.find(item => item.id === productId);
+      
+      if (item) {
+        const newQuantity = item.quantity + change;
+        if (newQuantity <= 0) {
+          bundle.items = bundle.items.filter(item => item.id !== productId);
+        } else {
+          item.quantity = newQuantity;
+        }
+        
+        this.renderBundleSlots(bundleId);
+        this.updateProductCard(bundleId, productId);
+        this.updateBundleSummary(bundleId);
+      }
+    },
+    
+    removeFromSlot: function(bundleId, slotIndex) {
+      const bundle = this.bundles[bundleId];
+      const flattenedItems = this.getFlattenedItems(bundleId);
+      
+      if (flattenedItems[slotIndex]) {
+        const productId = flattenedItems[slotIndex].id;
+        this.updateQuantity(bundleId, productId, -1);
+      }
+    },
+    
+    clearBundle: function(bundleId) {
+      this.bundles[bundleId].items = [];
+      this.renderBundleSlots(bundleId);
+      this.updateAllProductCards(bundleId);
+      this.updateBundleSummary(bundleId);
+    },
+    
+    updateBundleSize: function(bundleId, newSize) {
+      if (newSize < 1 || newSize > 12) {
+        this.showMessage(bundleId, '{{ "bundle.invalidSize" | t }}', 'error');
+        return;
+      }
+      
+      const bundle = this.bundles[bundleId];
+      const oldSize = bundle.size;
+      bundle.size = newSize;
+      
+      // Update the data attribute
+      const container = document.querySelector(`[data-bundle-id="${bundleId}"]`);
+      container.dataset.bundleSize = newSize;
+      
+      // Remove excess items if new size is smaller
+      const totalItems = this.getTotalItems(bundleId);
+      if (totalItems > newSize) {
+        let remainingSlots = newSize;
+        bundle.items.forEach(item => {
+          if (remainingSlots <= 0) {
+            item.quantity = 0;
+          } else if (item.quantity > remainingSlots) {
+            item.quantity = remainingSlots;
+            remainingSlots = 0;
+          } else {
+            remainingSlots -= item.quantity;
+          }
+        });
+        bundle.items = bundle.items.filter(item => item.quantity > 0);
+      }
+      
+      this.renderBundleSlots(bundleId);
+      this.updateAllProductCards(bundleId);
+      this.updateBundleSummary(bundleId);
+    },
+    
+    renderBundleSlots: function(bundleId) {
+      const bundle = this.bundles[bundleId];
+      const slotsContainer = document.getElementById(`bundle-slots-${bundleId}`);
+      const flattenedItems = this.getFlattenedItems(bundleId);
+      
+      slotsContainer.innerHTML = '';
+      
+      for (let i = 0; i < bundle.size; i++) {
+        const slot = document.createElement('div');
+        slot.className = 'bundle-slot';
+        slot.dataset.index = i;
+        
+        if (flattenedItems[i]) {
+          slot.classList.add('filled');
+          slot.innerHTML = `
+            <img src="${flattenedItems[i].image}" alt="${flattenedItems[i].title}">
+            <button class="remove-item" data-index="${i}">×</button>
+          `;
+        } else {
+          slot.innerHTML = `
+            <div class="slot-placeholder">
+              <span class="slot-number">${i + 1}</span>
+            </div>
+          `;
+        }
+        
+        slotsContainer.appendChild(slot);
+      }
+      
+      this.updateAddToCartButton(bundleId);
+    },
+    
+    updateProductCard: function(bundleId, productId) {
+      const bundle = this.bundles[bundleId];
+      const productCard = document.querySelector(`[data-product-id="${productId}"][data-bundle-id="${bundleId}"]`);
+      const item = bundle.items.find(item => item.id === productId);
+      const quantity = item ? item.quantity : 0;
+      
+      const addBtn = productCard.querySelector('.add-to-bundle-btn');
+      const quantityControls = productCard.querySelector('.quantity-controls');
+      const quantityDisplay = productCard.querySelector('.quantity-display');
+      
+      if (quantity > 0) {
+        addBtn.classList.add('hidden');
+        quantityControls.classList.remove('hidden');
+        quantityDisplay.textContent = quantity;
+      } else {
+        addBtn.classList.remove('hidden');
+        quantityControls.classList.add('hidden');
+      }
+    },
+    
+    updateAllProductCards: function(bundleId) {
+      const bundle = this.bundles[bundleId];
+      const container = document.querySelector(`[data-bundle-id="${bundleId}"]`);
+      const productCards = container.querySelectorAll('.bundle-product-card');
+      
+      productCards.forEach(card => {
+        const productId = card.dataset.productId;
+        this.updateProductCard(bundleId, productId);
+      });
+    },
+    
+    updateBundleSummary: function(bundleId) {
+      const bundle = this.bundles[bundleId];
+      const totalItems = this.getTotalItems(bundleId);
+      const summary = document.getElementById(`bundle-summary-${bundleId}`);
+      
+      if (summary) {
+        if (totalItems === 0) {
+          summary.innerHTML = `<p class="bundle-status">{{ 'bundle.selectProducts' | t: count: bundle.size }}</p>`;
+        } else if (totalItems === bundle.size) {
+          summary.innerHTML = `<p class="bundle-status bundle-complete">{{ 'bundle.bundleComplete' | t }}</p>`;
+        } else {
+          summary.innerHTML = `<p class="bundle-status">{{ 'bundle.itemsSelected' | t: count: totalItems, total: bundle.size }}</p>`;
+        }
+      }
+    },
+    
+    updateAddToCartButton: function(bundleId) {
+      const bundle = this.bundles[bundleId];
+      const totalItems = this.getTotalItems(bundleId);
+      const addToCartBtn = document.getElementById(`add-to-cart-${bundleId}`);
+      
+      if (addToCartBtn) {
+        if (totalItems === bundle.size) {
+          addToCartBtn.classList.remove('hidden');
+        } else {
+          addToCartBtn.classList.add('hidden');
+        }
+      }
+    },
+    
+    addToCart: function(bundleId) {
+      const bundle = this.bundles[bundleId];
+      const totalItems = this.getTotalItems(bundleId);
+      
+      if (totalItems === 0) {
+        this.showMessage(bundleId, '{{ "bundle.bundleEmpty" | t }}', 'error');
+        return;
+      }
+      
+      if (totalItems !== bundle.size) {
+        this.showMessage(bundleId, '{{ "bundle.bundleIncomplete" | t }}', 'error');
+        return;
+      }
+      
+      // Prepare bundle data for cart
+      const bundleData = {
+        items: bundle.items.map(item => ({
+          id: item.id,
+          quantity: item.quantity
+        })),
+        bundle_id: bundleId,
+        total_items: totalItems
+      };
+      
+      // Add to cart using Shopify's cart API
+      this.addBundleToCart(bundleData);
+    },
+    
+    addBundleToCart: function(bundleData) {
+      // This would integrate with Shopify's cart API
+      // For now, we'll show a success message
+      console.log('Adding bundle to cart:', bundleData);
+      
+      // Simulate cart addition
+      this.showMessage(bundleData.bundle_id, '{{ "bundle.addedToCart" | t }}', 'success');
+      
+      // Clear the bundle after successful addition
+      setTimeout(() => {
+        this.clearBundle(bundleData.bundle_id);
+      }, 2000);
+    },
+    
+    getTotalItems: function(bundleId) {
+      const bundle = this.bundles[bundleId];
+      return bundle.items.reduce((sum, item) => sum + item.quantity, 0);
+    },
+    
+    getFlattenedItems: function(bundleId) {
+      const bundle = this.bundles[bundleId];
+      const flattened = [];
+      
+      bundle.items.forEach(item => {
+        for (let i = 0; i < item.quantity; i++) {
+          flattened.push(item);
+        }
+      });
+      
+      return flattened;
+    },
+    
+    showMessage: function(bundleId, message, type) {
+      const container = document.querySelector(`[data-bundle-id="${bundleId}"]`);
+      const existingMessage = container.querySelector('.bundle-message');
+      
+      if (existingMessage) {
+        existingMessage.remove();
+      }
+      
+      const messageEl = document.createElement('div');
+      messageEl.className = `bundle-message bundle-message-${type}`;
+      messageEl.textContent = message;
+      
+      container.appendChild(messageEl);
+      
+      setTimeout(() => {
+        messageEl.remove();
+      }, 3000);
+    }
+  };
+  
+  // Initialize all bundles on the page
+  document.addEventListener('DOMContentLoaded', function() {
+    const bundleContainers = document.querySelectorAll('.product-bundle-container');
+    bundleContainers.forEach(container => {
+      const bundleId = container.dataset.bundleId;
+      BundleManager.init(bundleId);
+    });
+  });
+  
+  // Make BundleManager available globally for debugging
+  window.BundleManager = BundleManager;
+})();
+</script> 

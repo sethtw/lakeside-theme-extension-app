@@ -1,0 +1,132 @@
+{% comment %}
+  Product Bundle Block
+  Displays products in a grid with bundle functionality
+{% endcomment %}
+
+{% render 'bundle_styles' %}
+
+{% assign bundle_size = block.settings.bundle_size | default: 6 %}
+{% assign products = collections[block.settings.collection].products | limit: block.settings.max_products %}
+
+<div class="product-bundle-container" 
+     data-bundle-size="{{ bundle_size }}"
+     data-bundle-id="{{ block.id }}"
+     style="--bundle-color: {{ block.settings.bundle_color | default: '#007acc' }};
+            --bundle-accent-color: {{ block.settings.bundle_accent_color | default: '#ff6b35' }};">
+  
+  <div class="bundle-header">
+    <h2 class="bundle-title">{{ block.settings.title | default: 'Create Your Bundle' }}</h2>
+    <div class="bundle-controls">
+      <label for="bundle-size-{{ block.id }}">{{ 'bundle.bundleSize' | t }}:</label>
+      <input type="number" 
+             id="bundle-size-{{ block.id }}" 
+             min="1" 
+             max="12" 
+             value="{{ bundle_size }}"
+             class="bundle-size-input">
+      <button type="button" class="update-bundle-btn">{{ 'bundle.updateBundle' | t }}</button>
+    </div>
+  </div>
+
+  <div class="bundle-content">
+    <section class="products-section">
+      <h3>{{ 'bundle.products' | t }}</h3>
+      <div class="products-grid" id="products-grid-{{ block.id }}">
+        {% for product in products %}
+          {% render 'bundle_product_card', 
+                     product: product, 
+                     bundle_id: block.id,
+                     show_price: block.settings.show_prices %}
+        {% endfor %}
+      </div>
+    </section>
+    
+    <section class="bundle-section">
+      <h3>{{ 'bundle.yourBundle' | t }}</h3>
+      <div class="bundle-container">
+        <div class="bundle-slots" id="bundle-slots-{{ block.id }}">
+          {% for i in (1..bundle_size) %}
+            <div class="bundle-slot" data-index="{{ forloop.index0 }}">
+              <div class="slot-placeholder">
+                <span class="slot-number">{{ forloop.index }}</span>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="bundle-actions">
+          <button type="button" 
+                  class="add-to-cart-btn hidden" 
+                  id="add-to-cart-{{ block.id }}">
+            {{ 'bundle.addToCart' | t }}
+          </button>
+          <button type="button" 
+                  class="clear-bundle-btn" 
+                  id="clear-bundle-{{ block.id }}">
+            {{ 'bundle.clearBundle' | t }}
+          </button>
+        </div>
+        <div class="bundle-summary" id="bundle-summary-{{ block.id }}">
+          <p class="bundle-status">{{ 'bundle.selectProducts' | t: count: bundle_size }}</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+{% render 'bundle_script' %}
+
+{% schema %}
+{
+  "name": "Product Bundle",
+  "target": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Bundle Title",
+      "default": "Create Your Bundle"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Product Collection"
+    },
+    {
+      "type": "range",
+      "id": "bundle_size",
+      "label": "Bundle Size",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Maximum Products to Show",
+      "min": 4,
+      "max": 50,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "checkbox",
+      "id": "show_prices",
+      "label": "Show Product Prices",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "bundle_color",
+      "label": "Bundle Primary Color",
+      "default": "#007acc"
+    },
+    {
+      "type": "color",
+      "id": "bundle_accent_color",
+      "label": "Bundle Accent Color",
+      "default": "#ff6b35"
+    }
+  ]
+}
+{% endschema %} 

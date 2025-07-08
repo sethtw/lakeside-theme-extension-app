@@ -6,5 +6,24 @@
     "home": {
       "recommendationText": "Recommended Product!"
     }
+  },
+  "bundle": {
+    "bundleSize": "Bundle Size",
+    "updateBundle": "Update Bundle",
+    "products": "Products",
+    "yourBundle": "Your Bundle",
+    "addToCart": "Add Bundle to Cart",
+    "clearBundle": "Clear Bundle",
+    "addToBundle": "Add to Bundle",
+    "onSale": "Sale",
+    "outOfStock": "Out of Stock",
+    "selectProducts": "Select {{ count }} products to complete your bundle",
+    "itemsSelected": "{{ count }} of {{ total }} items selected",
+    "bundleComplete": "Bundle Complete! Ready to add to cart.",
+    "bundleFull": "Bundle is full! Please remove an item or increase bundle size.",
+    "bundleEmpty": "Bundle is empty!",
+    "bundleIncomplete": "Please complete your bundle before adding to cart.",
+    "invalidSize": "Bundle size must be between 1 and 12",
+    "addedToCart": "Bundle added to cart successfully!"
   }
 }
