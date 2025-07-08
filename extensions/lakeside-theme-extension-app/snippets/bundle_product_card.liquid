@@ -24,10 +24,6 @@
         {{ product.title }}
         <br>
         First available variant: {{ product.first_available_variant.id }}
-        <br>
-        {% for variant in product.variants %}
-          {{ variant.id }}<br>
-        {% endfor %}
       </a>
     </h4>
     
