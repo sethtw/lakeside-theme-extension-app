@@ -22,6 +22,12 @@
     <h4 class="product-title">
       <a href="{{ product.url }}" class="product-link">
         {{ product.title }}
+        <br>
+        First available variant: {{ product.first_available_variant.id }}
+        <br>
+        {% for variant in product.variants %}
+          {{ variant.id }}<br>
+        {% endfor %}
       </a>
     </h4>
     
@@ -39,9 +45,17 @@
     {% if product.available %}
       <div class="product-actions">
         <button type="button" 
+                class="add-to-cart-direct-btn"
+                data-product-id="{{ product.id }}"
+                data-bundle-id="{{ bundle_id }}"
+                data-variant-id="{{ product.first_available_variant.id }}">
+          {{ 'bundle.addToCartDirect' | t }}
+        </button>
+        <button type="button" 
                 class="add-to-bundle-btn"
                 data-product-id="{{ product.id }}"
-                data-bundle-id="{{ bundle_id }}">
+                data-bundle-id="{{ bundle_id }}"
+                data-variant-id="{{ product.first_available_variant.id }}">
           {{ 'bundle.addToBundle' | t }}
         </button>
         <div class="quantity-controls hidden">

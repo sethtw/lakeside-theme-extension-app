@@ -15,6 +15,7 @@
     "addToCart": "Add Bundle to Cart",
     "clearBundle": "Clear Bundle",
     "addToBundle": "Add to Bundle",
+    "addToCartDirect": "Add to Cart",
     "onSale": "Sale",
     "outOfStock": "Out of Stock",
     "selectProducts": "Select {{ count }} products to complete your bundle",
@@ -24,6 +25,11 @@
     "bundleEmpty": "Bundle is empty!",
     "bundleIncomplete": "Please complete your bundle before adding to cart.",
     "invalidSize": "Bundle size must be between 1 and 12",
-    "addedToCart": "Bundle added to cart successfully!"
+    "addedToCart": "Bundle added to cart successfully!",
+    "addingToCart": "Adding...",
+    "itemAddedToCart": "Item added to cart successfully!",
+    "errorAddingToCart": "Error adding item to cart. Please try again.",
+    "addingBundleToCart": "Adding bundle...",
+    "errorAddingBundleToCart": "Error adding bundle to cart. Please try again."
   }
 }

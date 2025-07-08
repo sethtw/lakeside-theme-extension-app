@@ -9,7 +9,10 @@ A Shopify Theme Extension that allows customers to create customizable product b
 - **Interactive Bundle Slots**: Visual representation of bundle progress
 - **Quantity Controls**: Add/remove products with quantity controls
 - **Dynamic Bundle Updates**: Real-time bundle size adjustments
-- **Cart Integration**: Add complete bundles to cart
+- **AJAX Cart Integration**: Add individual products or complete bundles to cart without page reload
+- **Real-time Cart Updates**: Automatic cart count updates across the site
+- **Variant Support**: Handle product variants when available
+- **Error Handling**: Comprehensive error handling with user feedback
 - **Responsive Design**: Works on desktop, tablet, and mobile
 - **Customizable Styling**: Theme colors and styling options
 - **Sale Badge Support**: Highlights products on sale
@@ -112,6 +115,49 @@ The bundle uses CSS custom properties for easy theming:
   --bundle-error: #dc3545;           /* Error color */
 }
 ```
+
+### AJAX Cart Integration
+
+The bundle extension includes full AJAX cart integration:
+
+#### Individual Product Cart Addition
+
+```javascript
+// Add a single product directly to cart
+BundleManager.addToCartDirect(bundleId, productId);
+```
+
+**Features:**
+- Uses Shopify's `/cart/add.js` endpoint
+- Handles product variants automatically
+- Updates cart count across the site
+- Shows loading states and feedback
+- Error handling with user messages
+
+#### Bundle Cart Addition
+
+```javascript
+// Add complete bundle to cart
+BundleManager.addBundleToCart(bundleData);
+```
+
+**Features:**
+- Adds all bundle items simultaneously
+- Parallel AJAX requests for better performance
+- Comprehensive error handling
+- Automatic bundle clearing after success
+
+#### Cart Count Updates
+
+```javascript
+// Update cart count elements
+BundleManager.updateCartCount(newCount);
+```
+
+**Supported Elements:**
+- `.cart-count`
+- `.cart-item-count`
+- `[data-cart-count]`
 
 ### JavaScript Integration
 
