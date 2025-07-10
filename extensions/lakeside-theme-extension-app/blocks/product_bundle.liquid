@@ -6,7 +6,7 @@
 {% render 'bundle_styles' %}
 
 {% assign bundle_size = block.settings.bundle_size | default: 6 %}
-{% assign products = collections[block.settings.collection].products | limit: block.settings.max_products %}
+{% assign products = collections[block.settings.collection].products %}
 
 <div class="product-bundle-container" 
      data-bundle-size="{{ bundle_size }}"
@@ -34,9 +34,10 @@
       <div class="products-grid" id="products-grid-{{ block.id }}">
         {% for product in products %}
           {% render 'bundle_product_card', 
-                     product: product, 
-                     bundle_id: block.id,
-                     show_price: block.settings.show_prices %}
+            product: product, 
+            variant: product.first_available_variant, 
+            bundle_id: block.id,
+            show_price: block.settings.show_prices %}
         {% endfor %}
       </div>
     </section>

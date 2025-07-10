@@ -5,10 +5,13 @@
 
 <div class="bundle-product-card" 
      data-product-id="{{ product.id }}"
+     data-variant-id="{{ variant.id }}"
      data-bundle-id="{{ bundle_id }}">
   
   <div class="product-image-container">
-    <img src="{{ product.featured_image | img_url: 'medium' }}" 
+    <img src="{{ product.featured_image | image_url }}"
+         width="100"
+         height="100"
          alt="{{ product.title | escape }}"
          class="product-image"
          loading="lazy">
@@ -23,7 +26,7 @@
       <a href="{{ product.url }}" class="product-link">
         {{ product.title }}
         <br>
-        First available variant: {{ product.first_available_variant.id }}
+        First available variant: {{ variant.id }}
       </a>
     </h4>
     
@@ -44,26 +47,28 @@
                 class="add-to-cart-direct-btn"
                 data-product-id="{{ product.id }}"
                 data-bundle-id="{{ bundle_id }}"
-                data-variant-id="{{ product.first_available_variant.id }}">
+                data-variant-id="{{ variant.id }}">
           {{ 'bundle.addToCartDirect' | t }}
         </button>
         <button type="button" 
                 class="add-to-bundle-btn"
                 data-product-id="{{ product.id }}"
                 data-bundle-id="{{ bundle_id }}"
-                data-variant-id="{{ product.first_available_variant.id }}">
+                data-variant-id="{{ variant.id }}">
           {{ 'bundle.addToBundle' | t }}
         </button>
         <div class="quantity-controls hidden">
           <button type="button" 
                   class="quantity-btn minus-btn"
                   data-product-id="{{ product.id }}"
-                  data-bundle-id="{{ bundle_id }}">-</button>
+                  data-bundle-id="{{ bundle_id }}"
+                  data-variant-id="{{ variant.id }}">-</button>
           <span class="quantity-display">0</span>
           <button type="button" 
                   class="quantity-btn plus-btn"
                   data-product-id="{{ product.id }}"
-                  data-bundle-id="{{ bundle_id }}">+</button>
+                  data-bundle-id="{{ bundle_id }}"
+                  data-variant-id="{{ variant.id }}">+</button>
         </div>
       </div>
     {% else %}
