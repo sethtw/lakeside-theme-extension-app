@@ -25,8 +25,6 @@
     <h4 class="product-title">
       <a href="{{ product.url }}" class="product-link">
         {{ product.title }}
-        <br>
-        First available variant: {{ variant.id }}
       </a>
     </h4>
     
@@ -44,17 +42,11 @@
     {% if product.available %}
       <div class="product-actions">
         <button type="button" 
-                class="add-to-cart-direct-btn"
-                data-product-id="{{ product.id }}"
-                data-bundle-id="{{ bundle_id }}"
-                data-variant-id="{{ variant.id }}">
-          {{ 'bundle.addToCartDirect' | t }}
-        </button>
-        <button type="button" 
                 class="add-to-bundle-btn"
                 data-product-id="{{ product.id }}"
                 data-bundle-id="{{ bundle_id }}"
-                data-variant-id="{{ variant.id }}">
+                data-variant-id="{{ variant.id }}"
+                data-variant="{{ variant }}">
           {{ 'bundle.addToBundle' | t }}
         </button>
         <div class="quantity-controls hidden">
@@ -62,13 +54,15 @@
                   class="quantity-btn minus-btn"
                   data-product-id="{{ product.id }}"
                   data-bundle-id="{{ bundle_id }}"
-                  data-variant-id="{{ variant.id }}">-</button>
+                  data-variant-id="{{ variant.id }}"
+                  data-variant="{{ variant }}">-</button>
           <span class="quantity-display">0</span>
           <button type="button" 
                   class="quantity-btn plus-btn"
                   data-product-id="{{ product.id }}"
                   data-bundle-id="{{ bundle_id }}"
-                  data-variant-id="{{ variant.id }}">+</button>
+                  data-variant-id="{{ variant.id }}"
+                  data-variant="{{ variant }}">+</button>
         </div>
       </div>
     {% else %}

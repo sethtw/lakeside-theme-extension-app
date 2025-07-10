@@ -54,8 +54,9 @@
         if (e.target.classList.contains('quantity-btn')) {
           const productId = e.target.dataset.productId;
           const variantId = e.target.dataset.variantId;
+          const variant = e.target.dataset.variant;
           const isPlus = e.target.classList.contains('plus-btn');
-          this.updateQuantity(bundleId, productId, variantId, isPlus ? 1 : -1);
+          this.updateQuantity(bundleId, productId, variantId, variant, isPlus ? 1 : -1);
         }
       });
       
@@ -110,7 +111,7 @@
       const productCard = document.querySelector(`[data-product-id="${productId}"][data-variant-id="${variantId}"][data-bundle-id="${bundleId}"]`);
       const productTitle = productCard.querySelector('.product-title a').textContent.trim();
       const productImage = productCard.querySelector('.product-image').src;
-      
+      const variant = productCard.dataset.variant;
       const existingItem = bundle.items.find(item => item.id === productId && item.variantId === variantId);
       if (existingItem) {
         existingItem.quantity++;
@@ -120,92 +121,20 @@
           variantId: variantId,
           title: productTitle,
           image: productImage,
-          quantity: 1
+          quantity: 1,
+          variant: variant
         });
       }
       
       this.renderBundleSlots(bundleId);
-      this.updateProductCard(bundleId, productId, variantId);
+      this.updateProductCard(bundleId, productId, variantId, variant);
       this.updateBundleSummary(bundleId);
     },
     
-    /**
-     * Add a single product directly to cart via AJAX
-     * @param {string} bundleId - The bundle container ID
-     * @param {string} productId - The product ID to add to cart
-     */
-    addToCartDirect: function(bundleId, productId, variantId) {
-      const productCard = document.querySelector(`[data-product-id="${productId}"][data-variant-id="${variantId}"][data-bundle-id="${bundleId}"]`);
-      const button = productCard.querySelector('.add-to-cart-direct-btn');
-      
-      // Disable button during request
-      button.disabled = true;
-      button.textContent = '{{ "bundle.addingToCart" | t }}';
-      
-      //// Get variant ID (default to product ID if no variant is selected)
-      //const variantId = productCard.dataset.variantId || productId;
-
-      console.log('productCard.dataset.variantId:', productCard.dataset.variantId);
-      console.log('productId:', productId);
-      console.log('variantId:', variantId);
-      
-      // // Prepare the data for the AJAX request
-      // const formData = new FormData();
-      // formData.append('id', variantId);
-      // formData.append('quantity', 1);
-      
-      let formData = {
-        'items': [{
-         'id': variantId,
-         'quantity': 1
-         }]
-       };
-      
-      // Make the AJAX request
-      fetch('/cart/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(cart => {
-        // Handle successful add to cart
-        console.log('Item added to cart:', cart);
-        
-        // Update cart count if available
-        this.updateCartCount(cart.item_count);
-        
-        // Show success message
-        this.showMessage(bundleId, '{{ "bundle.itemAddedToCart" | t }}', 'success');
-        
-        // Optional: Trigger cart drawer or mini cart update
-        if (typeof window.updateCartDrawer === 'function') {
-          window.updateCartDrawer();
-        }
-      })
-      .catch(error => {
-        console.error('Error adding to cart:', error);
-        
-        // Show error message
-        this.showMessage(bundleId, '{{ "bundle.errorAddingToCart" | t }}', 'error');
-      })
-      .finally(() => {
-        // Re-enable button
-        button.disabled = false;
-        button.textContent = '{{ "bundle.addToCartDirect" | t }}';
-      });
-    },
-    
-    updateQuantity: function(bundleId, productId, variantId, change) {
+    updateQuantity: function(bundleId, productId, variantId, variant, change) {
       const bundle = this.bundles[bundleId];
       const item = bundle.items.find(item => item.id === productId && item.variantId === variantId);
+      console.log('item:', item);
       
       if (item) {
         const newQuantity = item.quantity + change;
@@ -216,7 +145,7 @@
         }
         
         this.renderBundleSlots(bundleId);
-        this.updateProductCard(bundleId, productId, variantId);
+        this.updateProductCard(bundleId, productId, variantId, variant);
         this.updateBundleSummary(bundleId);
       }
     },
@@ -230,7 +159,7 @@
         const variantId = flattenedItems[slotIndex].variantId;
         console.log('productId:', productId);
         console.log('variantId:', variantId);
-        this.updateQuantity(bundleId, productId, variantId, -1);
+        this.updateQuantity(bundleId, productId, variantId, variant, -1);
       }
     },
     
@@ -309,7 +238,7 @@
       this.updateAddToCartButton(bundleId);
     },
     
-    updateProductCard: function(bundleId, productId, variantId) {
+    updateProductCard: function(bundleId, productId, variantId, variant) {
       const bundle = this.bundles[bundleId];
       const productCard = document.querySelector(`[data-product-id="${productId}"][data-variant-id="${variantId}"][data-bundle-id="${bundleId}"]`);
       const item = bundle.items.find(item => item.id === productId && item.variantId === variantId);
@@ -337,7 +266,8 @@
       productCards.forEach(card => {
         const productId = card.dataset.productId;
         const variantId = card.dataset.variantId;
-        this.updateProductCard(bundleId, productId, variantId);
+        const variant = card.dataset.variant;
+        this.updateProductCard(bundleId, productId, variantId, variant);
       });
     },
     
@@ -413,14 +343,15 @@
       
       // Create a promise for each item to be added to cart
       let formData = {
-        'items': []
+        'items': [{
+          'id': 42158803255344, //bundleItem.variantId, TODO: get the correct variant id
+          'quantity': 1,
+          'properties': {}
+        }]
       };
 
       bundleData.items.forEach(bundleItem => {
-        formData.items.push({
-          'id': bundleItem.variantId,
-          'quantity': bundleItem.quantity
-        });
+        formData.items[0].properties[bundleItem.title] = bundleItem.quantity;
       });
       
       // Make the AJAX request
