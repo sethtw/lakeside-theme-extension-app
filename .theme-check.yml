@@ -1,0 +1,11 @@
+# The directory where theme folders are located (optional)
+root: extensions/lakeside-theme-extension-app
+
+# Configuration files are extensible
+extends:
+  - theme-check:theme-app-extension # or theme-check:recommended ,theme-check:all
+
+# extends: theme-check:recommended
+
+ignore:
+  - node_modules/**
