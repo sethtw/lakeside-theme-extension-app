@@ -412,70 +412,41 @@
       }
       
       // Create a promise for each item to be added to cart
-      const addItemPromises = bundleData.items.map(item => {
-        const productCard = document.querySelector(`[data-product-id="${item.id}"][data-variant-id="${item.variantId}"][data-bundle-id="${bundleData.bundle_id}"]`);
-        const variantId = productCard ? (productCard.dataset.variantId) : item.variantId;
-        
-        const formData = {
-          'items': [{
-            'id': variantId,
-            'quantity': item.quantity
-          }]
-        };
-        
-        return fetch('/cart/add', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData)
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}: ${response.json()}`);
-          }
-          console.log('response:', response);
-          return response.url;
+      let formData = {
+        'items': []
+      };
+
+      bundleData.items.forEach(bundleItem => {
+        formData.items.push({
+          'id': bundleItem.variantId,
+          'quantity': bundleItem.quantity
         });
       });
       
-      // Add all items to cart
-      Promise.all(addItemPromises)
-        .then(results => {
-          console.log('Bundle added to cart:', results);
-          
-          // Update cart count if available
-          if (results.length > 0 && results[0].item_count !== undefined) {
-            this.updateCartCount(results[0].item_count);
-          }
-          
-          // Show success message
-          this.showMessage(bundleData.bundle_id, '{{ "bundle.addedToCart" | t }}', 'success');
-          
-          // Optional: Trigger cart drawer or mini cart update
-          if (typeof window.updateCartDrawer === 'function') {
-            window.updateCartDrawer();
-          }
-          
-          // Clear the bundle after successful addition
-          setTimeout(() => {
-            this.clearBundle(bundleData.bundle_id);
-          }, 2000);
-        })
-        .catch(error => {
-          console.error('Error adding bundle to cart:', error);
-          
-          // Show error message
-          this.showMessage(bundleData.bundle_id, '{{ "bundle.errorAddingBundleToCart" | t }}', 'error');
-        })
-        .finally(() => {
-          // Re-enable button
-          if (addToCartBtn) {
-            addToCartBtn.disabled = false;
-            addToCartBtn.textContent = '{{ "bundle.addToCart" | t }}';
-          }
-          window.location.href = "/cart"; // Redirect to cart page
-        });
+      // Make the AJAX request
+      fetch('/cart/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.url;
+      })
+      .catch(error => {
+        console.error('Error adding to cart:', error);
+        
+        // Show error message
+        this.showMessage(bundleId, '{{ "bundle.errorAddingToCart" | t }}', 'error');
+      })
+      .finally(() => {
+        // Redirect to cart page
+        window.location.href = "/cart";
+      });
     },
     
     getTotalItems: function(bundleId) {
