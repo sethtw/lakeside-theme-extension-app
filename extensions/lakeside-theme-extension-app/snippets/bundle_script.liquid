@@ -341,7 +341,7 @@
         addToCartBtn.textContent = '{{ "bundle.addingBundleToCart" | t }}';
       }
       
-      // Create a promise for each item to be added to cart
+      // Create a promise all items to be added to cart
       let formData = {
         'items': [{
           'id': 42158803255344, //bundleItem.variantId, TODO: get the correct variant id
@@ -349,7 +349,7 @@
           'properties': {}
         }]
       };
-
+      
       bundleData.items.forEach(bundleItem => {
         formData.items[0].properties[bundleItem.title] = bundleItem.quantity;
       });
