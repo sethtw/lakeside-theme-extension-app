@@ -294,16 +294,16 @@
       }
 
       let line_item_properties = {};
-      let note_detail = '';
+      let note_detail = '' // 'Bundle includes: \n';
 
       bundleData.items.forEach(bundleItem => {
-        line_item_properties[bundleItem.title] = bundleItem.quantity;
-        note_detail += bundleItem.title + ' (' + bundleItem.quantity + '), ';
+        // line_item_properties[bundleItem.title] = bundleItem.quantity;
+        note_detail += bundleItem.title + ' (' + bundleItem.quantity + '), \n';
       });
 
-      note_detail = note_detail.slice(0, -2); // Remove the last ', '
+      note_detail = note_detail.slice(0, -3); // Remove the last ', \n'
 
-      line_item_properties['note_detail'] = note_detail;
+      line_item_properties['Details'] = note_detail;
       
       // Get the bundle variant ID from the bundle data
       const bundle = this.bundles[bundleData.bundle_id];
@@ -315,8 +315,7 @@
           'id': bundleVariantId,
           'quantity': 1,
           'properties': line_item_properties
-        }],
-        'note': note_detail
+        }]
       };
       
       // Make the AJAX request
