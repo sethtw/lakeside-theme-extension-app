@@ -8,9 +8,13 @@
 {% assign bundle_size = block.settings.bundle_size | default: 6 %}
 {% assign products = collections[block.settings.collection].products %}
 
+{% assign bundle_product = block.settings.bundle_product %}
+{% assign bundle_variant_id = bundle_product.first_available_variant.id %}
+
 <div class="product-bundle-container" 
      data-bundle-size="{{ bundle_size }}"
      data-bundle-id="{{ block.id }}"
+     data-bundle-variant-id="{{ bundle_variant_id }}"
      style="--bundle-color: {{ block.settings.bundle_color | default: '#007acc' }};
             --bundle-accent-color: {{ block.settings.bundle_accent_color | default: '#ff6b35' }};
             --bundle-bg: {{ block.settings.background_color | default: '#ffffff' }};
@@ -93,6 +97,11 @@
       "type": "collection",
       "id": "collection",
       "label": "Product Collection"
+    },
+    {
+      "type": "product",
+      "id": "bundle_product",
+      "label": "Bundle Product"
     },
     {
       "type": "range",

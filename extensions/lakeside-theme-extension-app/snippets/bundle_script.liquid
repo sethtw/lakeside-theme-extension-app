@@ -18,8 +18,10 @@
     bundles: {},
     
     init: function(bundleId) {
+      const container = document.querySelector(`[data-bundle-id="${bundleId}"]`);
       this.bundles[bundleId] = {
-        size: parseInt(document.querySelector(`[data-bundle-id="${bundleId}"]`).dataset.bundleSize),
+        size: parseInt(container.dataset.bundleSize),
+        variantId: container.dataset.bundleVariantId,
         items: [],
         slots: []
       };
@@ -303,10 +305,14 @@
 
       line_item_properties['note_detail'] = note_detail;
       
+      // Get the bundle variant ID from the bundle data
+      const bundle = this.bundles[bundleData.bundle_id];
+      const bundleVariantId = bundle.variantId;
+      
       // Create a promise for each item to be added to cart
       let formData = {
         'items': [{
-          'id': 42158803255344, //bundleItem.variantId, TODO: get the correct variant id
+          'id': bundleVariantId,
           'quantity': 1,
           'properties': line_item_properties
         }],
