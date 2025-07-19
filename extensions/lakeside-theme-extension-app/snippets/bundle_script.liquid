@@ -80,23 +80,7 @@
         addToCartBtn.addEventListener('click', () => this.addToCart(bundleId));
       }
       
-      // Update bundle size
-      const updateBtn = container.querySelector('.update-bundle-btn');
-      const sizeInput = document.getElementById(`bundle-size-${bundleId}`);
-      
-      if (updateBtn && sizeInput) {
-        updateBtn.addEventListener('click', () => {
-          const newSize = parseInt(sizeInput.value);
-          this.updateBundleSize(bundleId, newSize);
-        });
-        
-        sizeInput.addEventListener('keypress', (e) => {
-          if (e.key === 'Enter') {
-            const newSize = parseInt(sizeInput.value);
-            this.updateBundleSize(bundleId, newSize);
-          }
-        });
-      }
+
     },
     
     addToBundle: function(bundleId, productId, variantId) {
@@ -170,41 +154,7 @@
       this.updateBundleSummary(bundleId);
     },
     
-    updateBundleSize: function(bundleId, newSize) {
-      if (newSize < 1 || newSize > 12) {
-        this.showMessage(bundleId, '{{ "bundle.invalidSize" | t }}', 'error');
-        return;
-      }
-      
-      const bundle = this.bundles[bundleId];
-      const oldSize = bundle.size;
-      bundle.size = newSize;
-      
-      // Update the data attribute
-      const container = document.querySelector(`[data-bundle-id="${bundleId}"]`);
-      container.dataset.bundleSize = newSize;
-      
-      // Remove excess items if new size is smaller
-      const totalItems = this.getTotalItems(bundleId);
-      if (totalItems > newSize) {
-        let remainingSlots = newSize;
-        bundle.items.forEach(item => {
-          if (remainingSlots <= 0) {
-            item.quantity = 0;
-          } else if (item.quantity > remainingSlots) {
-            item.quantity = remainingSlots;
-            remainingSlots = 0;
-          } else {
-            remainingSlots -= item.quantity;
-          }
-        });
-        bundle.items = bundle.items.filter(item => item.quantity > 0);
-      }
-      
-      this.renderBundleSlots(bundleId);
-      this.updateAllProductCards(bundleId);
-      this.updateBundleSummary(bundleId);
-    },
+
     
     renderBundleSlots: function(bundleId) {
       const bundle = this.bundles[bundleId];
@@ -340,19 +290,28 @@
         addToCartBtn.disabled = true;
         addToCartBtn.textContent = '{{ "bundle.addingBundleToCart" | t }}';
       }
+
+      let line_item_properties = {};
+      let note_detail = '';
+
+      bundleData.items.forEach(bundleItem => {
+        line_item_properties[bundleItem.title] = bundleItem.quantity;
+        note_detail += bundleItem.title + ' (' + bundleItem.quantity + '), ';
+      });
+
+      note_detail = note_detail.slice(0, -2); // Remove the last ', '
+
+      line_item_properties['note_detail'] = note_detail;
       
       // Create a promise for each item to be added to cart
       let formData = {
         'items': [{
           'id': 42158803255344, //bundleItem.variantId, TODO: get the correct variant id
           'quantity': 1,
-          'properties': {}
-        }]
+          'properties': line_item_properties
+        }],
+        'note': note_detail
       };
-
-      bundleData.items.forEach(bundleItem => {
-        formData.items[0].properties[bundleItem.title] = bundleItem.quantity;
-      });
       
       // Make the AJAX request
       fetch('/cart/add', {

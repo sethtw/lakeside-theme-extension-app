@@ -12,20 +12,22 @@
      data-bundle-size="{{ bundle_size }}"
      data-bundle-id="{{ block.id }}"
      style="--bundle-color: {{ block.settings.bundle_color | default: '#007acc' }};
-            --bundle-accent-color: {{ block.settings.bundle_accent_color | default: '#ff6b35' }};">
+            --bundle-accent-color: {{ block.settings.bundle_accent_color | default: '#ff6b35' }};
+            --bundle-bg: {{ block.settings.background_color | default: '#ffffff' }};
+            --bundle-border: {{ block.settings.border_color | default: '#e1e5e9' }};
+            --bundle-text: {{ block.settings.text_color | default: '#333333' }};
+            --bundle-text-light: {{ block.settings.text_light_color | default: '#666666' }};
+            --bundle-success: {{ block.settings.success_color | default: '#b1e0cd' }};
+            --bundle-error: {{ block.settings.error_color | default: '#dc3545' }};
+            --bundle-warning: {{ block.settings.warning_color | default: '#ffc107' }};
+            --bundle-button-hover: {{ block.settings.button_hover_color | default: '#005a9e' }};
+            --bundle-error-hover: {{ block.settings.error_hover_color | default: '#c82333' }};
+            --bundle-clear-hover: {{ block.settings.clear_hover_color | default: '#545b62' }};
+            --bundle-container-bg: {{ block.settings.container_background_color | default: '#f8f9fa' }};
+            --bundle-shadow-color: {{ block.settings.shadow_color | default: 'rgba(0, 123, 204, 0.15)' }};">
   
   <div class="bundle-header">
     <h2 class="bundle-title">{{ block.settings.title | default: 'Create Your Bundle' }}</h2>
-    <div class="bundle-controls">
-      <label for="bundle-size-{{ block.id }}">{{ 'bundle.bundleSize' | t }}:</label>
-      <input type="number" 
-             id="bundle-size-{{ block.id }}" 
-             min="1" 
-             max="12" 
-             value="{{ bundle_size }}"
-             class="bundle-size-input">
-      <button type="button" class="update-bundle-btn">{{ 'bundle.updateBundle' | t }}</button>
-    </div>
   </div>
 
   <div class="bundle-content">
@@ -117,16 +119,118 @@
       "default": true
     },
     {
+      "type": "header",
+      "content": "Primary Colors"
+    },
+    {
       "type": "color",
       "id": "bundle_color",
-      "label": "Bundle Primary Color",
+      "label": "Primary Color",
       "default": "#007acc"
     },
     {
       "type": "color",
       "id": "bundle_accent_color",
-      "label": "Bundle Accent Color",
+      "label": "Accent Color",
       "default": "#ff6b35"
+    },
+    {
+      "type": "header",
+      "content": "Background Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Main Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "container_background_color",
+      "label": "Container Background",
+      "default": "#f8f9fa"
+    },
+    {
+      "type": "header",
+      "content": "Text Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Primary Text",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "text_light_color",
+      "label": "Secondary Text",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Border & Shadow"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#e1e5e9"
+    },
+    {
+      "type": "color",
+      "id": "shadow_color",
+      "label": "Shadow Color",
+      "default": "rgba(0, 123, 204, 0.15)"
+    },
+    {
+      "type": "header",
+      "content": "Status Colors"
+    },
+    {
+      "type": "color",
+      "id": "success_color",
+      "label": "Success Color",
+      "default": "#b1e0cd"
+    },
+    {
+      "type": "color",
+      "id": "error_color",
+      "label": "Error Color",
+      "default": "#dc3545"
+    },
+    {
+      "type": "color",
+      "id": "warning_color",
+      "label": "Warning Color",
+      "default": "#ffc107"
+    },
+    {
+      "type": "header",
+      "content": "Button Hover Colors"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Primary Button Hover",
+      "default": "#005a9e"
+    },
+    {
+      "type": "color",
+      "id": "error_hover_color",
+      "label": "Error Button Hover",
+      "default": "#c82333"
+    },
+    {
+      "type": "color",
+      "id": "clear_hover_color",
+      "label": "Clear Button Hover",
+      "default": "#545b62"
+    },
+    {
+      "type": "color",
+      "id": "cart_confirmation_color",
+      "label": "Cart Confirmation Color",
+      "default": "#000000"
     }
   ]
 }

@@ -11,7 +11,7 @@
   --bundle-border: #e1e5e9;
   --bundle-text: #333333;
   --bundle-text-light: #666666;
-  --bundle-success: #28a745;
+  --bundle-success: #b1e0cd;
   --bundle-error: #dc3545;
   --bundle-warning: #ffc107;
   
@@ -25,9 +25,6 @@
 }
 
 .bundle-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
   border-bottom: 2px solid var(--bundle-border);
@@ -40,41 +37,6 @@
   margin: 0;
 }
 
-.bundle-controls {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.bundle-controls label {
-  font-weight: 600;
-  color: var(--bundle-text);
-}
-
-.bundle-size-input {
-  width: 80px;
-  padding: 0.5rem;
-  border: 2px solid var(--bundle-border);
-  border-radius: 6px;
-  font-size: 1rem;
-  text-align: center;
-}
-
-.update-bundle-btn {
-  background: var(--bundle-color);
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.update-bundle-btn:hover {
-  background: #005a9e;
-}
-
 .bundle-content {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -84,12 +46,6 @@
 @media (max-width: 768px) {
   .bundle-content {
     grid-template-columns: 1fr;
-  }
-  
-  .bundle-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
   }
 }
 
@@ -118,7 +74,7 @@
 
 .bundle-product-card:hover {
   border-color: var(--bundle-color);
-  box-shadow: 0 4px 12px rgba(0, 123, 204, 0.15);
+  box-shadow: 0 4px 12px var(--bundle-shadow-color);
 }
 
 .product-image-container {
@@ -205,7 +161,7 @@
 }
 
 .add-to-bundle-btn:hover {
-  background: #005a9e;
+  background: var(--bundle-button-hover);
 }
 
 .quantity-controls {
@@ -228,7 +184,7 @@
 }
 
 .quantity-btn:hover {
-  background: #005a9e;
+  background: var(--bundle-button-hover);
 }
 
 .quantity-display {
@@ -257,7 +213,7 @@
 }
 
 .bundle-container {
-  background: #f8f9fa;
+  background: var(--bundle-container-bg);
   border-radius: 8px;
   padding: 1.5rem;
 }
@@ -327,7 +283,7 @@
 }
 
 .remove-item:hover {
-  background: #c82333;
+  background: var(--bundle-error-hover);
 }
 
 .bundle-actions {
@@ -338,7 +294,7 @@
 
 .add-to-cart-btn {
   background: var(--bundle-success);
-  color: white;
+  color: #000000;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
@@ -349,7 +305,8 @@
 }
 
 .add-to-cart-btn:hover {
-  background: #218838;
+  background: var(--bundle-success);
+  color: #000000;
 }
 
 .clear-bundle-btn {
@@ -365,7 +322,7 @@
 }
 
 .clear-bundle-btn:hover {
-  background: #545b62;
+  background: var(--bundle-clear-hover);
 }
 
 .bundle-summary {
