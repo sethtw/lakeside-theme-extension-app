@@ -81,6 +81,14 @@
           <p class="bundle-status">{{ 'bundle.selectProducts' | t: count: bundle_size }}</p>
         </div>
       </div>
+      <div class="bundle-gift-message-container">
+        <div class="bundle-gift-message-label">
+          <h3 for="bundle-gift-message-{{ block.id }}">{{ 'bundle.giftMessage' | t }}</h3>
+        </div>
+        <div class="bundle-gift-message-input-container">
+          <textarea id="bundle-gift-message-{{ block.id }}" name="bundle-gift-message" placeholder="{{ 'bundle.giftMessagePlaceholder' | t }}" class="bundle-gift-message-input"></textarea>
+        </div>
+      </div> 
     </section>
   </div>
 </div>

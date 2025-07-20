@@ -95,7 +95,16 @@
       }
       
       const productCard = document.querySelector(`[data-product-id="${productId}"][data-variant-id="${variantId}"][data-bundle-id="${bundleId}"]`);
-      const productTitle = productCard.querySelector('.product-title a').textContent.trim();
+      
+      // Get product title - handle both linked and non-linked titles
+      const titleElement = productCard.querySelector('.product-title');
+      let productTitle;
+      if (titleElement.querySelector('a')) {
+        productTitle = titleElement.querySelector('a').textContent.trim();
+      } else {
+        productTitle = titleElement.textContent.trim();
+      }
+      
       const productImage = productCard.querySelector('.product-image').src;
       const variant = productCard.dataset.variant;
       const existingItem = bundle.items.find(item => item.id === productId && item.variantId === variantId);
@@ -124,6 +133,16 @@
       
       if (item) {
         const newQuantity = item.quantity + change;
+        
+        // Check if trying to increase quantity would exceed bundle limit
+        if (change > 0) {
+          const totalItems = this.getTotalItems(bundleId);
+          if (totalItems >= bundle.size) {
+            this.showMessage(bundleId, '{{ "bundle.bundleFull" | t }}', 'error');
+            return;
+          }
+        }
+        
         if (newQuantity <= 0) {
           bundle.items = bundle.items.filter(item => item.id !== productId && item.variantId !== variantId);
         } else {
@@ -143,6 +162,7 @@
       if (flattenedItems[slotIndex]) {
         const productId = flattenedItems[slotIndex].id;
         const variantId = flattenedItems[slotIndex].variantId;
+        const variant = flattenedItems[slotIndex].variant;
         console.log('productId:', productId);
         console.log('variantId:', variantId);
         this.updateQuantity(bundleId, productId, variantId, variant, -1);
@@ -155,8 +175,6 @@
       this.updateAllProductCards(bundleId);
       this.updateBundleSummary(bundleId);
     },
-    
-
     
     renderBundleSlots: function(bundleId) {
       const bundle = this.bundles[bundleId];
@@ -236,7 +254,7 @@
         } else {
           const count = totalItems.toString();
           const total = bundle.size.toString();
-          summary.innerHTML = `<p class="bundle-status">{{ "bundle.itemsSelected" | t: count: totalItems, total: totalItems }}</p>`;
+          summary.innerHTML = `<p class="bundle-status">{{ "bundle.itemsSelected" | t: count: count, total: total }}</p>`;
         }
       }
     },
