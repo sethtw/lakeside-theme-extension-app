@@ -81,8 +81,6 @@
       if (addToCartBtn) {
         addToCartBtn.addEventListener('click', () => this.addToCart(bundleId));
       }
-      
-
     },
     
     addToBundle: function(bundleId, productId, variantId) {
@@ -248,13 +246,13 @@
       
       if (summary) {
         if (totalItems === 0) {
-          summary.innerHTML = `<p class="bundle-status">{{ 'bundle.selectProducts' | t: count: bundle.size }}</p>`;
+          // For empty bundle, use the static message with bundle size
+          summary.innerHTML = `<p class="bundle-status">Select ${bundle.size} products to complete your box</p>`;
         } else if (totalItems === bundle.size) {
           summary.innerHTML = `<p class="bundle-status bundle-complete">{{ 'bundle.bundleComplete' | t }}</p>`;
         } else {
-          const count = totalItems.toString();
-          const total = bundle.size.toString();
-          summary.innerHTML = `<p class="bundle-status">{{ "bundle.itemsSelected" | t: count: count, total: total }}</p>`;
+          // For partial bundle, show progress
+          summary.innerHTML = `<p class="bundle-status">${totalItems} of ${bundle.size} items selected</p>`;
         }
       }
     },
@@ -286,12 +284,17 @@
         this.showMessage(bundleId, '{{ "bundle.bundleIncomplete" | t }}', 'error');
         return;
       }
+
+      // Add gift message to bundle
+      const giftMessageInput = document.getElementById(`bundle-gift-message-${bundleId}`);
+      const giftMessage = giftMessageInput.value;
       
       // Prepare bundle data for cart
       const bundleData = {
         items: bundle.items,
         bundle_id: bundleId,
-        total_items: totalItems
+        total_items: totalItems,
+        gift_message: giftMessage
       };
       
       // Add to cart using Shopify's cart API
@@ -320,9 +323,9 @@
       });
 
       note_detail = note_detail.slice(0, -3); // Remove the last ', \n'
-
       line_item_properties['Details'] = note_detail;
-      
+      line_item_properties['Gift Message'] = bundleData.gift_message;
+
       // Get the bundle variant ID from the bundle data
       const bundle = this.bundles[bundleData.bundle_id];
       const bundleVariantId = bundle.variantId;

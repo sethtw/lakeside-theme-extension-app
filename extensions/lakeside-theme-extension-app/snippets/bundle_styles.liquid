@@ -349,7 +349,7 @@
 }
 
 .bundle-gift-message-container {
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 
 .bundle-gift-message-label {
@@ -360,18 +360,20 @@
 
 .bundle-gift-message-input-container {
   width: 100%;
-  padding: 0.5rem;
   font-size: 1.1rem;
-  margin-top: 0.5rem;
 }
 
 .bundle-gift-message-input {
   width: 100%;
-  padding: 0.5rem;
-  border: 1px solid var(--bundle-border);
+  outline: 2px solid var(--bundle-border);
+  border: 0px;
   border-radius: 4px;
-  font-size: 1.1rem;
-  margin-top: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.bundle-gift-message-input:focus {
+  outline: 1px solid var(--bundle-color);
+  outline-offset: 2px;
 }
 
 /* Messages */
