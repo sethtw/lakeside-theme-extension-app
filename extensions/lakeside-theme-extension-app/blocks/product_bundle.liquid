@@ -1,13 +1,7 @@
-{% comment %}
-  Product Bundle Block
-  Displays products in a grid with bundle functionality
-{% endcomment %}
-
 {% render 'bundle_styles' %}
 
-{% assign bundle_size = block.settings.bundle_size | default: 6 %}
+{% assign bundle_size = block.settings.bundle_size %}
 {% assign products = collections[block.settings.collection].products %}
-
 {% assign bundle_product = block.settings.bundle_product %}
 {% assign bundle_variant_id = bundle_product.first_available_variant.id %}
 
@@ -15,23 +9,22 @@
      data-bundle-size="{{ bundle_size }}"
      data-bundle-id="{{ block.id }}"
      data-bundle-variant-id="{{ bundle_variant_id }}"
-     style="--bundle-color: {{ block.settings.bundle_color | default: '#007acc' }};
-            --bundle-accent-color: {{ block.settings.bundle_accent_color | default: '#ff6b35' }};
-            --bundle-bg: {{ block.settings.background_color | default: '#ffffff' }};
-            --bundle-border: {{ block.settings.border_color | default: '#e1e5e9' }};
-            --bundle-text: {{ block.settings.text_color | default: '#333333' }};
-            --bundle-text-light: {{ block.settings.text_light_color | default: '#666666' }};
-            --bundle-success: {{ block.settings.success_color | default: '#b1e0cd' }};
-            --bundle-error: {{ block.settings.error_color | default: '#dc3545' }};
-            --bundle-warning: {{ block.settings.warning_color | default: '#ffc107' }};
-            --bundle-button-hover: {{ block.settings.button_hover_color | default: '#005a9e' }};
-            --bundle-error-hover: {{ block.settings.error_hover_color | default: '#c82333' }};
-            --bundle-clear-hover: {{ block.settings.clear_hover_color | default: '#545b62' }};
-            --bundle-container-bg: {{ block.settings.container_background_color | default: '#f8f9fa' }};
-            --bundle-shadow-color: {{ block.settings.shadow_color | default: 'rgba(0, 123, 204, 0.15)' }};">
+     style="--bundle-color: {{ block.settings.bundle_color }};
+            --bundle-accent-color: {{ block.settings.bundle_accent_color }};
+            --bundle-bg: {{ block.settings.background_color }};
+            --bundle-border: {{ block.settings.border_color }};
+            --bundle-text: {{ block.settings.text_color }};
+            --bundle-success: {{ block.settings.success_color }};
+            --bundle-error: {{ block.settings.error_color }};
+            --bundle-warning: {{ block.settings.warning_color }};
+            --bundle-button-hover: {{ block.settings.button_hover_color }};
+            --bundle-error-hover: {{ block.settings.error_hover_color }};
+            --bundle-clear-hover: {{ block.settings.clear_hover_color }};
+            --bundle-container-bg: {{ block.settings.container_background_color }};
+            --bundle-shadow-color: {{ block.settings.shadow_color }};">
   
   <div class="bundle-header">
-    <h2 class="bundle-title">{{ block.settings.title | default: 'Create Your Bundle' }}</h2>
+    <h3 class="bundle-title">{{ block.settings.title }}</h3>
   </div>
 
   <div class="bundle-content">
@@ -109,30 +102,20 @@
     {
       "type": "collection",
       "id": "collection",
-      "label": "Product Collection"
+      "label": "Product Collection",
+      "info": "Select a collection of products to display in the bundle"
     },
     {
       "type": "product",
       "id": "bundle_product",
-      "label": "Bundle Product"
+      "label": "Bundle Product",
+      "info": "Select a product to represent the bundle product itself."
     },
     {
-      "type": "range",
+      "type": "number",
       "id": "bundle_size",
       "label": "Bundle Size",
-      "min": 1,
-      "max": 12,
-      "step": 1,
       "default": 6
-    },
-    {
-      "type": "range",
-      "id": "max_products",
-      "label": "Maximum Products to Show",
-      "min": 4,
-      "max": 50,
-      "step": 1,
-      "default": 20
     },
     {
       "type": "checkbox",
@@ -157,32 +140,21 @@
       "default": "assistant_n4"
     },
     {
-      "type": "range",
+      "type": "number",
       "id": "product_title_size",
       "label": "Product Title Text Size",
-      "default": 14,
-      "min": 10,
-      "max": 20,
-      "step": 1,
-      "unit": "px"
+      "default": 14
     },
     {
-      "type": "range",
+      "type": "number",
       "id": "button_text_size",
       "label": "Add to Bundle Button Text Size",
-      "default": 12,
-      "min": 8,
-      "max": 20,
-      "step": 1,
-      "unit": "px"
+      "default": 12
     },
     {
-      "type": "range",
+      "type": "number",
       "id": "product_image_size",
       "label": "Product Image Size",
-      "min": 100,
-      "max": 200,
-      "step": 10,
       "default": 150,
       "info": "Size in pixels (width and height)"
     },
@@ -219,22 +191,6 @@
       "default": "#f8f9fa"
     },
     {
-      "type": "header",
-      "content": "Text Colors"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "Primary Text",
-      "default": "#333333"
-    },
-    {
-      "type": "color",
-      "id": "text_light_color",
-      "label": "Secondary Text",
-      "default": "#666666"
-    },
-    {
       "type": "color",
       "id": "border_color",
       "label": "Border Color",
@@ -245,6 +201,16 @@
       "id": "shadow_color",
       "label": "Shadow Color",
       "default": "rgba(0, 123, 204, 0.15)"
+    },
+    {
+      "type": "header",
+      "content": "Text Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Primary Text",
+      "default": "#212121"
     },
     {
       "type": "header",

@@ -1,14 +1,3 @@
-{% comment %}
-  Bundle JavaScript Functionality
-  Handles all bundle interactions and cart integration
-  Features:
-  - Bundle management (add/remove items, update quantities)
-  - AJAX cart integration for individual products and bundles
-  - Real-time cart count updates
-  - Variant support (when data-variant-id is available)
-  - Error handling and user feedback
-{% endcomment %}
-
 <script>
 (function() {
   'use strict';
@@ -95,14 +84,7 @@
       const productCard = document.querySelector(`[data-product-id="${productId}"][data-variant-id="${variantId}"][data-bundle-id="${bundleId}"]`);
       
       // Get product title - handle both linked and non-linked titles
-      const titleElement = productCard.querySelector('.product-title');
-      let productTitle;
-      if (titleElement.querySelector('a')) {
-        productTitle = titleElement.querySelector('a').textContent.trim();
-      } else {
-        productTitle = titleElement.textContent.trim();
-      }
-      
+      const productTitle = productCard.querySelector('.product-title a')?.textContent.trim() || productCard.querySelector('.product-title').textContent.trim();
       const productImage = productCard.querySelector('.product-image').src;
       const variant = productCard.dataset.variant;
       const existingItem = bundle.items.find(item => item.id === productId && item.variantId === variantId);
@@ -127,7 +109,6 @@
     updateQuantity: function(bundleId, productId, variantId, variant, change) {
       const bundle = this.bundles[bundleId];
       const item = bundle.items.find(item => item.id === productId && item.variantId === variantId);
-      console.log('item:', item);
       
       if (item) {
         const newQuantity = item.quantity + change;
@@ -158,11 +139,7 @@
       const flattenedItems = this.getFlattenedItems(bundleId);
       
       if (flattenedItems[slotIndex]) {
-        const productId = flattenedItems[slotIndex].id;
-        const variantId = flattenedItems[slotIndex].variantId;
-        const variant = flattenedItems[slotIndex].variant;
-        console.log('productId:', productId);
-        console.log('variantId:', variantId);
+        const { id: productId, variantId, variant } = flattenedItems[slotIndex];
         this.updateQuantity(bundleId, productId, variantId, variant, -1);
       }
     },
@@ -216,13 +193,11 @@
       const quantityControls = productCard.querySelector('.quantity-controls');
       const quantityDisplay = productCard.querySelector('.quantity-display');
       
-      if (quantity > 0) {
-        addBtn.classList.add('hidden');
-        quantityControls.classList.remove('hidden');
+      const showQuantity = quantity > 0;
+      addBtn.classList.toggle('hidden', showQuantity);
+      quantityControls.classList.toggle('hidden', !showQuantity);
+      if (showQuantity) {
         quantityDisplay.textContent = quantity;
-      } else {
-        addBtn.classList.remove('hidden');
-        quantityControls.classList.add('hidden');
       }
     },
     
@@ -381,13 +356,6 @@
       });
       
       return flattened;
-    },
-    
-    updateCartCount: function(newCount) {
-      const cartCountElements = document.querySelectorAll('.cart-count, .cart-item-count, [data-cart-count]');
-      cartCountElements.forEach(element => {
-        element.textContent = newCount;
-      });
     },
     
     showMessage: function(bundleId, message, type) {

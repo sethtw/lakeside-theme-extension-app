@@ -1,25 +1,9 @@
-{% comment %}
-  Bundle Styles
-  Modern, responsive styling for the bundle functionality
-{% endcomment %}
-
 <style>
-{% assign product_title_font_size = block.settings.product_title_size %}
-{% assign button_text_size = block.settings.button_text_size %}
-{% assign product_font = block.settings.product_title_font %}
-{{ product_font | font_face }}
+
+{% assign product_title_font_family = block.settings.product_title_font.family %}
+{{ block.settings.product_title_font | font_face }}
 
 .product-bundle-container {
-  --bundle-color: #007acc;
-  --bundle-accent-color: #ff6b35;
-  --bundle-bg: #ffffff;
-  --bundle-border: #e1e5e9;
-  --bundle-text: #333333;
-  --bundle-text-light: #666666;
-  --bundle-success: #b1e0cd;
-  --bundle-error: #dc3545;
-  --bundle-warning: #ffc107;
-  
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
@@ -36,7 +20,7 @@
 
 .bundle-title {
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--bundle-text);
   margin: 0;
 }
@@ -56,7 +40,7 @@
 /* Products Section */
 .products-section h3 {
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--bundle-text);
   margin-bottom: 1rem;
 }
@@ -116,8 +100,8 @@
 
 .product-title {
   margin: 0 0 0.5rem 0;
-  font-family: {{ product_font.family }};
-  font-size: {{ product_title_font_size }}px;
+  font-family: {{ product_title_font_family }};
+  font-size: {{ block.settings.product_title_size | default: 12 }}px;
 }
 
 .product-link {
@@ -158,7 +142,7 @@
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 6px;
-  font-weight: 600;
+  font-weight: 400;
   font-size: {{ button_text_size }}px;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -193,7 +177,7 @@
 }
 
 .quantity-display {
-  font-weight: 600;
+  font-weight: 400;
   color: var(--bundle-text);
   min-width: 2rem;
   text-align: center;
@@ -212,7 +196,7 @@
 /* Bundle Section */
 .bundle-section h3 {
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--bundle-text);
   margin-bottom: 1rem;
 }
@@ -264,7 +248,7 @@
 
 .slot-number {
   font-size: 1.5rem;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--bundle-text-light);
 }
 
@@ -299,7 +283,7 @@
 
 .add-to-cart-btn {
   background: var(--bundle-success);
-  color: #000000;
+  color: #1f1f1f;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
@@ -310,17 +294,17 @@
 }
 
 .add-to-cart-btn:hover {
-  background: var(--bundle-success);
-  color: #000000;
+  background-color: var(--bundle-success);
+  opacity: 0.8;
 }
 
 .clear-bundle-btn {
-  background: var(--bundle-text-light);
+  background: var(--bundle-clear-hover);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   transition: background-color 0.2s;
   flex: 1;
@@ -328,6 +312,8 @@
 
 .clear-bundle-btn:hover {
   background: var(--bundle-clear-hover);
+  opacity: 0.8;
+  transition: opacity 0.2s;
 }
 
 .bundle-summary {
@@ -340,12 +326,12 @@
   margin: 0;
   font-weight: 400;
   color: var(--bundle-text);
-  font-size: 10px;
+  font-size: 1.2rem;
 }
 
 .bundle-complete {
-  color: var(--bundle-success);
-  font-weight: 600;
+  /* color: var(--bundle-text); */
+  /* font-weight: 600; */
 }
 
 .bundle-gift-message-container {
