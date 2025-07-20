@@ -4,6 +4,11 @@
 {% endcomment %}
 
 <style>
+{% assign product_title_font_size = block.settings.product_title_size %}
+{% assign button_text_size = block.settings.button_text_size %}
+{% assign product_font = block.settings.product_title_font %}
+{{ product_font | font_face }}
+
 .product-bundle-container {
   --bundle-color: #007acc;
   --bundle-accent-color: #ff6b35;
@@ -15,7 +20,6 @@
   --bundle-error: #dc3545;
   --bundle-warning: #ffc107;
   
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
@@ -84,8 +88,8 @@
 }
 
 .product-image {
-  width: 150px;
-  height: 150px;
+  width: var(--product-image-size, 150px);
+  height: var(--product-image-size, 150px);
   object-fit: cover;
   transition: transform 0.2s;
 }
@@ -112,8 +116,8 @@
 
 .product-title {
   margin: 0 0 0.5rem 0;
-  font-size: 1rem;
-  font-weight: 600;
+  font-family: {{ product_font.family }};
+  font-size: {{ product_title_font_size }}px;
 }
 
 .product-link {
@@ -155,6 +159,7 @@
   padding: 0.5rem 1rem;
   border-radius: 6px;
   font-weight: 600;
+  font-size: {{ button_text_size }}px;
   cursor: pointer;
   transition: background-color 0.2s;
   flex: 1;

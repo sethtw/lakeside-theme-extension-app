@@ -6,12 +6,13 @@
 <div class="bundle-product-card" 
      data-product-id="{{ product.id }}"
      data-variant-id="{{ variant.id }}"
-     data-bundle-id="{{ bundle_id }}">
+     data-bundle-id="{{ bundle_id }}"
+     style="--button-text-size: {{ button_size }}; --product-image-size: {{ image_size }}px;">
   
   <div class="product-image-container">
     <img src="{{ product.featured_image | image_url }}"
-         width="100"
-         height="100"
+         width="{{ image_size }}"
+         height="{{ image_size }}"
          alt="{{ product.title | escape }}"
          class="product-image"
          loading="lazy">
@@ -22,11 +23,17 @@
   </div>
   
   <div class="product-info">
-    <h4 class="product-title">
-      <a href="{{ product.url }}" class="product-link">
+    <p class="product-title">
+      {% comment %} style="--product-title-size: {{ product_title_size }}px; --product-title-font: {{ product_title_font.family }};"> {% endcomment %}
+       {% comment %} style="font-family: {{ product_title_font.family }}, {{ product_title_font.fallback_families }}; font-size: {{ product_title_size }}px;"> {% endcomment %}
+      {% if enable_product_link %}
+        <a href="{{ product.url }}" class="product-link">
+          {{ product.title }}
+        </a>
+      {% else %}
         {{ product.title }}
-      </a>
-    </h4>
+      {% endif %}
+    </p>
     
     {% if show_price %}
       <div class="product-price">

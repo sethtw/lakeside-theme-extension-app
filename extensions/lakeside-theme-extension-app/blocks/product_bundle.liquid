@@ -39,11 +39,16 @@
       <h3>{{ 'bundle.products' | t }}</h3>
       <div class="products-grid" id="products-grid-{{ block.id }}">
         {% for product in products %}
-          {% render 'bundle_product_card', 
-            product: product, 
-            variant: product.first_available_variant, 
+          {% render 'bundle_product_card',
+            product: product,
+            variant: product.first_available_variant,
             bundle_id: block.id,
-            show_price: block.settings.show_prices %}
+            show_price: block.settings.show_prices,
+            product_title_size: block.settings.product_title_size,
+            product_title_font: block.settings.product_title_font,
+            enable_product_link: block.settings.enable_product_link,
+            button_size: block.settings.button_text_size,
+            image_size: block.settings.product_image_size %}
         {% endfor %}
       </div>
     </section>
@@ -128,6 +133,52 @@
       "default": true
     },
     {
+      "type": "checkbox",
+      "id": "enable_product_link",
+      "label": "Enable Product Link",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Typography Settings"
+    },
+    {
+      "type": "font_picker",
+      "id": "product_title_font",
+      "label": "Product Title Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "product_title_size",
+      "label": "Product Title Text Size",
+      "default": 14,
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_text_size",
+      "label": "Add to Bundle Button Text Size",
+      "default": 12,
+      "min": 8,
+      "max": 20,
+      "step": 1,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "product_image_size",
+      "label": "Product Image Size",
+      "min": 100,
+      "max": 200,
+      "step": 10,
+      "default": 150,
+      "info": "Size in pixels (width and height)"
+    },
+    {
       "type": "header",
       "content": "Primary Colors"
     },
@@ -176,10 +227,6 @@
       "default": "#666666"
     },
     {
-      "type": "header",
-      "content": "Border & Shadow"
-    },
-    {
       "type": "color",
       "id": "border_color",
       "label": "Border Color",
@@ -193,7 +240,7 @@
     },
     {
       "type": "header",
-      "content": "Status Colors"
+      "content": "Button Styles"
     },
     {
       "type": "color",
@@ -214,10 +261,6 @@
       "default": "#ffc107"
     },
     {
-      "type": "header",
-      "content": "Button Hover Colors"
-    },
-    {
       "type": "color",
       "id": "button_hover_color",
       "label": "Primary Button Hover",
@@ -234,12 +277,6 @@
       "id": "clear_hover_color",
       "label": "Clear Button Hover",
       "default": "#545b62"
-    },
-    {
-      "type": "color",
-      "id": "cart_confirmation_color",
-      "label": "Cart Confirmation Color",
-      "default": "#000000"
     }
   ]
 }
