@@ -236,13 +236,15 @@
       const bundle = this.bundles[bundleId];
       const totalItems = this.getTotalItems(bundleId);
       const addToCartBtn = document.getElementById(`add-to-cart-${bundleId}`);
-      
+      const giftMessageInput = document.getElementById(`bundle-gift-message-${bundleId}`);
+      const isBundleFull = totalItems === bundle.size;
+
       if (addToCartBtn) {
-        if (totalItems === bundle.size) {
-          addToCartBtn.classList.remove('hidden');
-        } else {
-          addToCartBtn.classList.add('hidden');
-        }
+        addToCartBtn.classList.toggle('hidden', !isBundleFull);
+      }
+
+      if (giftMessageInput) {
+        giftMessageInput.style.outlineColor = isBundleFull ? 'var(--bundle-color)' : 'var(--bundle-border)';
       }
     },
     
