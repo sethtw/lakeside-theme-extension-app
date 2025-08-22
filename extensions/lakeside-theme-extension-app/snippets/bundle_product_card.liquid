@@ -20,7 +20,7 @@
   <div class="product-info">
     <p class="product-title">
       {% if enable_product_link %}
-        <a href="{{ product.url }}" class="product-link">
+        <a href="{{ product.url }}" class="product-link" target="_blank">
           {{ product.title }}
         </a>
       {% else %}
@@ -39,7 +39,7 @@
       </div>
     {% endif %}
     
-    {% if product.available %}
+    {% comment %} {% if product.available %} {% endcomment %}
       <div class="product-actions">
         <button type="button" 
                 class="add-to-bundle-btn"
@@ -65,10 +65,10 @@
                   data-variant="{{ variant }}">+</button>
         </div>
       </div>
-    {% else %}
+    {% comment %} {% else %}
       <div class="product-unavailable">
         <span class="unavailable-text">{{ 'bundle.outOfStock' | t }}</span>
       </div>
-    {% endif %}
+    {% endif %} {% endcomment %}
   </div>
 </div> 
